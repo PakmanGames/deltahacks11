@@ -1,14 +1,12 @@
 # Lists all contacts, supports add, delete, and view contacts
 
 import streamlit as st
-from models import Contact
+from models import Contact, get_contact_list, save_or_edit_contact
 import os
 
 st.title("Contacts")
 
-contacts: list[Contact] = [
-    
-]
+contacts = get_contact_list()
 
 # Function to display contact info
 def show_contact_details(contact: Contact):
@@ -52,7 +50,7 @@ def add_contact(contacts: list[Contact]):
             )
             
             # Save the contact to the contacts dictionary
-            contacts.append(contact)
+            save_or_edit_contact(contact)
             
             st.success(f"Contact {name} added successfully!")
         else:
