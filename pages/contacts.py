@@ -47,7 +47,7 @@ def add_contact(contacts: list[Contact]):
                 email=email,
                 dob=dob,
                 mainMemory=mainMemory,
-                image=image_path,
+                photo=image_path,
                 social_handles={}
             )
             
