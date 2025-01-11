@@ -10,7 +10,7 @@ contacts = get_contact_list()
 
 # Function to display contact info
 def show_contact_details(contact: Contact):
-    st.image(contact['image'], width=150)
+    st.image(contact.photo, width=150)
     st.write(f"**Name**: {contact.name}")
     st.write(f"**Phone**: {contact.phone}")
     st.write(f"**Email**: {contact.email}")
@@ -65,7 +65,7 @@ def display_contact_list(contacts: list[Contact]):
     else:
         for contact in contacts:
             if st.button(contact.name):
-                show_contact_details(contacts)
+                show_contact_details(contact)
 
 
 # Sidebar with options
