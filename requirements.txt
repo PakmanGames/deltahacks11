@@ -2,3 +2,4 @@ streamlit
 face-recognition
 opencv-python
 pydantic
+pydantic-mongo
