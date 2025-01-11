@@ -1,20 +1,35 @@
-from pydantic import BaseModel, Field
-from datetime import date
+from pydantic import BaseModel, Field, model_validator
+from pydantic_mongo import AbstractRepository, PydanticObjectId, fields
+from datetime import date, datetime
+from typing import Optional, List
+from pymongo import MongoClient
+import app_secrets
+
 
 class Contact(BaseModel):
+    id: Optional[PydanticObjectId] = None
     name: str
     photo: str
     email: str
     phone: str
-    dob: date
+    dob: datetime
     mainMemory: str
     social_handles: dict[str, str] = {}
     
-# TODO: Implement the functions to read and write the contacts to a MongoDB database
-contents: list[Contact] = []
+class ContactsRepository(AbstractRepository[Contact]):
+   class Meta:
+      collection_name = 'contacts'
+    
+client = MongoClient(app_secrets.MONGO_URL)
+database = client["main"]
+contacts_repository = ContactsRepository(database=database)
 
 def get_contact_list() -> list[Contact]:
-    return contents
+    return list(contacts_repository.find_by({}))
 
-def add_contact(contact: Contact, contacts: list[Contact]):
-    contacts.append(contact)
+def delete_contact(contact: Contact):
+    contacts_repository.delete(contact.id)
+
+def save_or_edit_contact(contact: Contact):
+    contacts_repository.save(contact)
+    

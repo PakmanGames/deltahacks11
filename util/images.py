@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import face_recognition
 
 def load_image(image_path: str) -> np.ndarray:
     """Load an image from a file path and return it as a numpy array."""
