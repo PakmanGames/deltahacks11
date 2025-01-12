@@ -5,7 +5,7 @@ import face_recognition
 import numpy as np
 from PIL import Image
 
-from skimage.metrics import structural_similarity
+# from skimage.metrics import structural_similarity
 
 from util.images import load_image
 
@@ -35,8 +35,8 @@ except ValueError as e:
 
 elon_encoding2 = face_recognition.face_encodings(elon_bgr2)[0]
 
-# result = face_recognition.compare_faces([elon_encoding], elon_encoding2)
-# print(result)
+result = face_recognition.compare_faces([elon_encoding], elon_encoding2)
+print(result)
 
 
 def detect_faces(image):
