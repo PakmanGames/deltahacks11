@@ -30,10 +30,10 @@ async def register(sid, data):
         await sio.emit("registered", {"role": role}, room=sid)
         print(f"Client {sid} registered as {role}")
 
-@sio.event
+@sio.event('video_frame')
 async def message(sid, data):
-    if clients["publisher"] and sid == clients["subscriber"]:
-        await sio.emit("message", data, room=clients["publisher"])
+    if clients["subscriber"] and sid == clients["publisher"]:
+        await sio.emit("message", data, room=clients["subscriber"])
 
 # run the web application
 if __name__ == '__main__':
