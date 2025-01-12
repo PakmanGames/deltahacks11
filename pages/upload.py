@@ -12,8 +12,8 @@ class ImageProcessor:
 class UploadApp:
     def __init__(self):
         st.set_page_config(layout="wide")
-        st.title("Face Recognition App")
-        st.write("This app is used to add new faces to the dataset")
+        st.title("MemoryLane contact upload")
+        st.write("Upload contacts that you want to remember.")
         self.menu = ["Adding", "Deleting", "Adjusting"]
         self.choice = st.sidebar.selectbox("Options", self.menu)
         
@@ -68,8 +68,12 @@ class UploadApp:
                 st.warning("Please check the image below to make sure you are deleting the right contact")
                 st.image(image)
                 if st.button("Delete", key="del_btn"):
-                    face_manager.delete_one(id_val)
-                    st.success("Contact deleted")
+                    if face_manager.delete_one(id_val):
+                        st.success("Contact deleted")
+                        print("success delete")
+                    else:
+                        st.error("Contact deletion failed")
+                        print("failed delete")
     
     def handle_adjusting(self):
         # Placeholder for adjusting functionality
