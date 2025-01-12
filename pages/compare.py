@@ -2,6 +2,7 @@ import streamlit as st
 import cv2
 import face_recognition as frg
 import yaml 
+import numpy as np
 from util.compare_util import recognize, build_dataset
 from dataclasses import dataclass
 
@@ -11,6 +12,12 @@ class FaceRecognitionConfig:
         cfg = yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader)
         self.picture_prompt = cfg['INFO']['PICTURE_PROMPT']
         self.webcam_prompt = cfg['INFO']['WEBCAM_PROMPT']
+
+class ImageProcessor:
+    @staticmethod
+    def process_uploaded_image(image_file):
+        bytes_data = image_file.getvalue()
+        return cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
 
 class ContactInfoDisplay:
     def __init__(self):
@@ -59,26 +66,37 @@ class FaceRecognitionApp:
         else:
             st.info("Please upload an image")
             
-    def handle_webcam_mode(self):
-        st.title("Face Recognition App")
-        st.write(self.config.webcam_prompt)
-        frame_window = st.image([])
-        
-        cam = cv2.VideoCapture(0)
-        cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        
-        while True:
-            ret, frame = cam.read()
-            if not ret:
-                st.error("Failed to capture frame from camera")
-                st.info("Please turn off the other app that is using the camera and restart app")
-                st.stop()
-                
-            processed_frame, name, id_val = recognize(frame, self.tolerance)
-            processed_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
-            self.contact_info.update_info(name, id_val)
-            frame_window.image(processed_frame)
+    def _handle_webcam_mode(self):
+        img_file_buffer = st.camera_input("Find a Face to Recognize")
+        if img_file_buffer is not None and st.button("Submit", key="submit_btn"):
+            # Process the uploaded image
+            cv2_img = ImageProcessor.process_uploaded_image(img_file_buffer)
+            
+            # Perform face recognition
+            processed_image, name, id_val = recognize(cv2_img, self.tolerance)
+            
+            # Convert the processed image from BGR to RGB for display
+            processed_image_rgb = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
+            
+            # Display the processed image
+            st.image(processed_image_rgb)
+
+    def _process_submission(self, name, id_val, image):
+        if name == "" or id_val == "":
+            st.error("Please enter name and ID")
+            return
+            
+        # Convert UploadedFile to cv2 image if needed
+        if hasattr(image, 'read'):
+            image = ImageProcessor.process_uploaded_image(image)
+            
+        ret = face_manager.submit_new(name, id_val, image)
+        if ret == 1:
+            st.success("Contact Added")
+        elif ret == 0:
+            st.error("Contact ID already exists")
+        elif ret == -1:
+            st.error("There is no face in the picture")
             
     def setup_developer_section(self):
         with st.sidebar.form(key='my_form'):
@@ -92,7 +110,7 @@ class FaceRecognitionApp:
         if self.choice == "Picture":
             self.handle_picture_mode()
         else:
-            self.handle_webcam_mode()
+            self._handle_webcam_mode()
         self.setup_developer_section()
 
 if __name__ == "__main__":
