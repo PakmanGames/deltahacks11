@@ -4,3 +4,4 @@ opencv-python
 pydantic
 pydantic-mongo
 streamlit_webrtc
+streamlit-camera-input-live
