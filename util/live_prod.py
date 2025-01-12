@@ -1,18 +1,18 @@
 import av
 from streamlit_webrtc import webrtc_streamer, RTCConfiguration
+from twilio.rest import Client
+from app_secrets import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN
+
+client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+token = client.tokens.create()
 
 def main():
     rtc_config = RTCConfiguration({
-        "iceServers": [{"urls": "stun:stun.l.google.com:19302"}]
+        "iceServers": token.ice_servers
     })
 
 
-    def video_frame_callback(frame: av.VideoFrame) -> av.VideoFrame:
-        img = frame.to_ndarray(format="bgr24")
-
-        flipped = img[::-1,:,:]
-
-        return av.VideoFrame.from_ndarray(flipped, format="bgr24")
-
-
-    webrtc_streamer(key="example", video_frame_callback=video_frame_callback, rtc_configuration=rtc_config)
+    webrtc_streamer(key="example", rtc_configuration=rtc_config, media_stream_constraints={
+        "video": True,
+        "audio": False
+    })

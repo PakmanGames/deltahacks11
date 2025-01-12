@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_webrtc import webrtc_streamer, RTCConfiguration
 import av
-from util.live_prod import main
+from util.live_dev import main
 
 st.title("Live feed")
 
