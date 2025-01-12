@@ -5,6 +5,14 @@ import face_recognition
 import numpy as np
 from PIL import Image
 
+from util.images import load_image
+
+image_path_elon = "contacts/elonmusk.jpg"
+try:
+    elon = load_image(image_path_elon)
+except ValueError as e:
+    st.error(f"Error loading image: {e}")
+
 def detect_faces(image):
     image_array = np.array(image)
     
