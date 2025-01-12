@@ -31,6 +31,10 @@ def display_contact_list():
     if not contacts:
         st.write("No contacts available.")
         return
+    
+    # Initialize session state for contact details visibility
+    if 'show_details' not in st.session_state:
+        st.session_state.show_details = {}
         
     # Display contacts in a vertical list
     for idx, contact in enumerate(contacts):
@@ -41,9 +45,21 @@ def display_contact_list():
             with col2:
                 st.subheader(contact.name)
                 st.write(f"ID: {contact.id}")
+                
+                # Toggle details visibility
                 if st.button("View Details", key=f"contact_{idx}"):
-                    show_contact_details(contact)
-            st.divider()  # Add visual separation between contacts
+                    if idx in st.session_state.show_details:
+                        del st.session_state.show_details[idx]
+                    else:
+                        st.session_state.show_details[idx] = True
+                        
+            # Show details if toggled
+            if idx in st.session_state.show_details:
+                show_contact_details(contact)
+                if st.button("Close", key=f"close_{idx}"):
+                    del st.session_state.show_details[idx]
+                    
+            st.divider()
 
 if __name__ == "__main__":
     display_contact_list()
