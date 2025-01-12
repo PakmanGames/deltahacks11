@@ -80,6 +80,7 @@ class FaceRecognitionApp:
             
             # Display the processed image
             st.image(processed_image_rgb)
+            self.contact_info.update_info(name, id_val)
 
     def _process_submission(self, name, id_val, image):
         if name == "" or id_val == "":
