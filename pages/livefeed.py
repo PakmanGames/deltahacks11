@@ -15,7 +15,29 @@ try:
 except ValueError as e:
     st.error(f"Error loading image: {e}")
 
-    elon_bgr = cv2.cvtColor(elon, cv2.COLOR_BGR2GRAY)
+try:
+    elon_bgr = cv2.cvtColor(elon, cv2.COLOR_BGR2RGB)
+except ValueError as e:
+    st.error(f"Error converting image to grayscale: {e}")
+
+elon_encoding = face_recognition.face_encodings(elon_bgr)[0]
+
+image_path_elon2 = "contacts/elonmusk2.jpg"
+try:
+    elon2 = cv2.imread(image_path_elon2)
+except ValueError as e:
+    st.error(f"Error loading image: {e}")
+
+try:
+    elon_bgr2 = cv2.cvtColor(elon2, cv2.COLOR_BGR2RGB)
+except ValueError as e:
+    st.error(f"Error converting image to grayscale: {e}")
+
+elon_encoding2 = face_recognition.face_encodings(elon_bgr2)[0]
+
+# result = face_recognition.compare_faces([elon_encoding], elon_encoding2)
+# print(result)
+
 
 def detect_faces(image):
     image_array = np.array(image)
