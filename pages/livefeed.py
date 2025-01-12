@@ -10,15 +10,23 @@ from util.images import load_image
 # Load the reference image (Elon Musk) and encode the face
 image_path_elon = "contacts/elonmusk.jpg"
 try:
-    elon_image = load_image(image_path_elon)
+    elon_image = cv2.imread(image_path_elon)
+    if elon_image is None:
+        st.error("Failed to load the reference image.")
+        st.stop()
 except ValueError as e:
     st.error(f"Error loading image: {e}")
+    st.stop()
 
 # Convert to RGB (OpenCV loads images in BGR by default)
 elon_image_rgb = cv2.cvtColor(elon_image, cv2.COLOR_BGR2RGB)
 
-# Encode Elon Musk's face
-elon_face_encoding = face_recognition.face_encodings(elon_image_rgb)[0]
+# Encode Elon Musk's face and ensure it's valid
+elon_face_encodings = face_recognition.face_encodings(elon_image_rgb)
+if not elon_face_encodings:
+    st.error("No face detected in the reference image.")
+    st.stop()
+elon_face_encoding = elon_face_encodings[0]
 
 def detect_and_compare_faces(live_image, reference_encoding):
     # Convert the PIL image to a numpy array
@@ -31,15 +39,16 @@ def detect_and_compare_faces(live_image, reference_encoding):
     face_locations = face_recognition.face_locations(image_bgr)
     face_encodings = face_recognition.face_encodings(image_bgr, face_locations)
 
+    if not face_encodings:
+        st.error("No face detected in the live image.")
+        return image_array, 0
+
     # Compare faces
-    face_match = False
-    for face_encoding in face_encodings:
-        matches = face_recognition.compare_faces([reference_encoding], face_encoding)
-        face_match = any(matches)
-        if face_match:
-            st.success("Face Match Found!")
-        else:
-            st.error("Face Match Not Found!")
+    face_match = face_recognition.compare_faces([reference_encoding], face_encodings[0])
+    if face_match:
+        st.success("Face Match Found!")
+    else:
+        st.error("Face Match Not Found!")
     
     # Draw rectangles around detected faces
     for (top, right, bottom, left) in face_locations:
@@ -55,9 +64,12 @@ if image:
     pil_image = Image.open(image)
     
     # Compare the live feed with the reference image
+    # THE ISSUE IS HERE
     image_with_faces, faces_detected = detect_and_compare_faces(pil_image, elon_face_encoding)
     
     # Display the modified image with rectangles
+    # THE ISSUE IS HERE
     st.image(image_with_faces, caption=f"Faces detected: {faces_detected}")
+    # st.image(elon_image_rgb)
 else:
     st.warning("Please capture an image.")
