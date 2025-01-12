@@ -3,7 +3,7 @@ import cv2
 import face_recognition as frg
 import yaml 
 import numpy as np
-from util.compare_util import recognize, build_dataset
+from util.compare_util import recognize
 from dataclasses import dataclass
 
 @dataclass
@@ -80,38 +80,13 @@ class FaceRecognitionApp:
             
             # Display the processed image
             st.image(processed_image_rgb)
-
-    def _process_submission(self, name, id_val, image):
-        if name == "" or id_val == "":
-            st.error("Please enter name and ID")
-            return
-            
-        # Convert UploadedFile to cv2 image if needed
-        if hasattr(image, 'read'):
-            image = ImageProcessor.process_uploaded_image(image)
-            
-        ret = face_manager.submit_new(name, id_val, image)
-        if ret == 1:
-            st.success("Contact Added")
-        elif ret == 0:
-            st.error("Contact ID already exists")
-        elif ret == -1:
-            st.error("There is no face in the picture")
-            
-    def setup_developer_section(self):
-        with st.sidebar.form(key='my_form'):
-            st.title("Developer Section")
-            if st.form_submit_button(label='REBUILD DATASET'):
-                with st.spinner("Rebuilding dataset..."):
-                    build_dataset()
-                st.success("Dataset has been reset")
+            self.contact_info.update_info(name, id_val)
                 
     def run(self):
         if self.choice == "Picture":
             self.handle_picture_mode()
         else:
             self._handle_webcam_mode()
-        self.setup_developer_section()
 
 if __name__ == "__main__":
     app = FaceRecognitionApp()
