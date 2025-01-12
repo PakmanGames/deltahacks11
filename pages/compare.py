@@ -43,7 +43,7 @@ class FaceRecognitionApp:
         
     def setup_sidebar(self):
         st.sidebar.title("Settings")
-        self.menu = ["Picture", "Webcam"]
+        self.menu = [ "Webcam", "Picture"]
         self.choice = st.sidebar.selectbox("Input type", self.menu)
         self.tolerance = st.sidebar.slider("Tolerance", 0.0, 1.0, 0.5, 0.01)
         st.sidebar.info("Tolerance is the threshold for face recognition. "
