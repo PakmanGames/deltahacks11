@@ -1,7 +1,7 @@
 # Lists all contacts, supports add, delete, and view contacts
 
 import streamlit as st
-from models import Contact, get_contact_list, save_or_edit_contact
+from models import Contact, get_contact_list, save_or_edit_contact, delete_contact
 import os
 import numpy as np
 import cv2
@@ -18,6 +18,12 @@ def show_contact_details(contact: Contact):
     st.write(f"**Email**: {contact.email}")
     st.write(f"**Date of birth**: {contact.dob}")
     st.write(f"**Main Memory**: {contact.mainMemory}")
+    
+    def _delete_contact():
+        delete_contact(contact)
+    
+    st.button("Delete Contact", on_click=_delete_contact)
+    st.write("-----")
 
 # Function to add a new contact
 def add_contact(contacts: list[Contact]):
