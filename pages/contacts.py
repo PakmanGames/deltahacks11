@@ -3,6 +3,8 @@
 import streamlit as st
 from models import Contact, get_contact_list, save_or_edit_contact
 import os
+import numpy as np
+import cv2
 
 st.title("Contacts")
 
@@ -25,19 +27,39 @@ def add_contact(contacts: list[Contact]):
     name = st.text_input("Name")
     phone = st.text_input("Phone")
     email = st.text_input("Email")
-    dob = st.date_input("Date of birth")
-    mainMemory = st.text_area("Main memory")
+    dob = st.date_input("Date of Birth")
+    mainMemory = st.text_area("Main Memory")
 
-    # Image uploader
-    image = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"])
+    # Image input choice
+    st.subheader("Add a Photo")
+    input_choice = st.radio("Choose how to add a photo:", ["Upload Image", "Take Picture with Webcam"])
+
+    image = None
+    if input_choice == "Upload Image":
+        # File uploader for image
+        image = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"])
+    elif input_choice == "Take Picture with Webcam":
+        # Webcam input for image
+        img_file_buffer = st.camera_input("Take a Picture")
+        if img_file_buffer:
+            # Convert the webcam image to a format that can be saved
+            image = img_file_buffer
 
     if st.button("Save Contact"):
         if image and name:
-            # Save the image to the directory
+            # Determine the image path
             image_path = os.path.join("contacts", f"{name}_{phone}.jpg")
-            with open(image_path, "wb") as f:
-                f.write(image.read())
-            
+
+            # Handle the image saving for both file uploader and webcam input
+            if input_choice == "Upload Image":
+                with open(image_path, "wb") as f:
+                    f.write(image.read())
+            elif input_choice == "Take Picture with Webcam":
+                # Convert webcam image to OpenCV format and save
+                img_array = np.frombuffer(image.getvalue(), np.uint8)
+                cv2_img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+                cv2.imwrite(image_path, cv2_img)
+
             # Create the contact dictionary
             contact = Contact(
                 name=name,
@@ -48,13 +70,13 @@ def add_contact(contacts: list[Contact]):
                 photo=image_path,
                 social_handles={}
             )
-            
-            # Save the contact to the contacts dictionary
+
+            # Save the contact to the contacts list
             save_or_edit_contact(contact)
-            
+
             st.success(f"Contact {name} added successfully!")
         else:
-            st.error("Name and image are required!")
+            st.error("Name and photo are required!")
 
 # Function to display the contact list
 def display_contact_list(contacts: list[Contact]):
