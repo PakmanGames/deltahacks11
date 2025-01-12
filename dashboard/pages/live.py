@@ -7,9 +7,10 @@ import io
 # Connect to the Socket.IO server
 sio = socketio.Client()
 
-@sio.on('connect')
-def on_connect():
-    sio.emit('register', {'role': 'subscriber'})
+@sio.event
+def connect():
+    print("Connected to the Socket.IO server")
+    sio.emit('register', {'type': 'subscriber'})
 
 sio.connect('http://localhost:5000')
 
