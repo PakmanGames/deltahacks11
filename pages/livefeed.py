@@ -5,19 +5,26 @@ import face_recognition
 import numpy as np
 from PIL import Image
 
+from skimage.metrics import structural_similarity
+
 from util.images import load_image
 
 image_path_elon = "contacts/elonmusk.jpg"
 try:
-    elon = load_image(image_path_elon)
+    elon = cv2.imread(image_path_elon)
 except ValueError as e:
     st.error(f"Error loading image: {e}")
+
+    elon_bgr = cv2.cvtColor(elon, cv2.COLOR_BGR2GRAY)
 
 def detect_faces(image):
     image_array = np.array(image)
     
     image_bgr = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
     
+    # score, diff = structural_similarity(elon_bgr, image_bgr, full=True)
+    # print("Similarity Score: {:.3f}%".format(score * 100))
+
     # find face locations
     face_locations = face_recognition.face_locations(image_bgr)
     
@@ -39,6 +46,7 @@ if image:
     image_with_faces, faces_detected = detect_faces(pil_image)
     
     # Display the modified image with rectangles
-    st.image(image_with_faces, caption=f"Faces detected: {faces_detected}")
+    # st.image(image_with_faces, caption=f"Faces detected: {faces_detected}")
+    st.image(elon_bgr)
 else:
     st.warning("Please capture an image.")
