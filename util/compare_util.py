@@ -53,13 +53,16 @@ class FaceRecognition:
                 match_idx = matches.index(True)
                 name = database[match_idx].name
                 id_val = database[match_idx].id
-                distance = round(distances[match_idx], 2)
+                mainMemory = database[match_idx].mainMemory
+                email = database[match_idx].email
+                phone = database[match_idx].phone
+                distance = round(min(0.95, distances[match_idx]+0.4),2)
                 cv2.putText(image, str(distance), (left, top-30), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0,255,0), 2)
                 
             cv2.rectangle(image, (left, top), (right, bottom), (0,255,0), 2)
             cv2.putText(image, name, (left, top-10), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0,255,0), 2)
             
-        return image, name, id_val
+        return image, name, id_val, mainMemory, email, phone
 
 # class FaceManager:
 #     def __init__(self):
