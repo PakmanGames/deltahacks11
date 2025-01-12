@@ -12,9 +12,9 @@ class FaceRecognitionConfig:
         self.picture_prompt = cfg['INFO']['PICTURE_PROMPT']
         self.webcam_prompt = cfg['INFO']['WEBCAM_PROMPT']
 
-class StudentInfoDisplay:
+class ContactInfoDisplay:
     def __init__(self):
-        st.sidebar.title("Student Information")
+        st.sidebar.title("Contact Information")
         self.name_container = st.sidebar.empty()
         self.id_container = st.sidebar.empty()
         self.reset_info()
@@ -31,7 +31,7 @@ class FaceRecognitionApp:
     def __init__(self):
         st.set_page_config(layout="wide")
         self.config = FaceRecognitionConfig()
-        # self.student_info = StudentInfoDisplay() # sidebar display
+        self.contact_info = ContactInfoDisplay() # sidebar display
         self.setup_sidebar()
         
     def setup_sidebar(self):
@@ -54,7 +54,7 @@ class FaceRecognitionApp:
             for image in uploaded_images:
                 image = frg.load_image_file(image)
                 processed_image, name, id_val = recognize(image, self.tolerance)
-                self.student_info.update_info(name, id_val)
+                self.contact_info.update_info(name, id_val)
                 st.image(processed_image)
         else:
             st.info("Please upload an image")
@@ -77,7 +77,7 @@ class FaceRecognitionApp:
                 
             processed_frame, name, id_val = recognize(frame, self.tolerance)
             processed_frame = cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB)
-            self.student_info.update_info(name, id_val)
+            self.contact_info.update_info(name, id_val)
             frame_window.image(processed_frame)
             
     def setup_developer_section(self):
