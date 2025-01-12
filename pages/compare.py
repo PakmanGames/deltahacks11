@@ -2,7 +2,7 @@ import streamlit as st
 import cv2
 import face_recognition as frg
 import yaml 
-from util.upload_util import recognize, build_dataset
+from util.compare_util import recognize, build_dataset
 from dataclasses import dataclass
 
 @dataclass
@@ -31,7 +31,7 @@ class FaceRecognitionApp:
     def __init__(self):
         st.set_page_config(layout="wide")
         self.config = FaceRecognitionConfig()
-        self.student_info = StudentInfoDisplay()
+        # self.student_info = StudentInfoDisplay() # sidebar display
         self.setup_sidebar()
         
     def setup_sidebar(self):
