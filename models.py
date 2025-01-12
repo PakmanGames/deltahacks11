@@ -28,7 +28,7 @@ def get_contact_list() -> list[Contact]:
     return list(contacts_repository.find_by({}))
 
 def delete_contact(contact: Contact):
-    contacts_repository.delete(contact.id)
+    contacts_repository.delete(contact)
 
 def save_or_edit_contact(contact: Contact):
     contacts_repository.save(contact)
