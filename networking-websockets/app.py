@@ -33,7 +33,7 @@ async def register(sid, data):
 @sio.event('video_frame')
 async def message(sid, data):
     if clients["subscriber"] and sid == clients["publisher"]:
-        await sio.emit("message", data, room=clients["subscriber"])
+        await sio.emit("frame", data, room=clients["subscriber"])
 
 # run the web application
 if __name__ == '__main__':
