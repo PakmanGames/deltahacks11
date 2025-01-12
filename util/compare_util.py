@@ -7,6 +7,8 @@ import yaml
 from collections import defaultdict
 from typing import Tuple, Dict, Any, Optional
 
+from typing import List
+
 class FaceDatabase:
     def __init__(self, config_path: str = 'config.yaml'):
         self.cfg = yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader)
@@ -95,6 +97,13 @@ class FaceManager:
             if person['id'] == id_val:
                 return person['name'], person['image'], idx
         return None, None, None
+
+    def get_all_info(self) -> List[Tuple[str, np.ndarray, str]]:
+        database = self.db.load()
+        contacts = []
+        for idx, person in database.items():
+            contacts.append((person['name'], person['image'], person['id']))
+        return contacts
         
     def delete_one(self, id_val: str) -> bool:
         database = self.db.load()
@@ -138,6 +147,7 @@ recognize = face_manager.recognizer.recognize
 isFaceExists = face_manager.recognizer.detect_faces
 submitNew = face_manager.submit_new
 get_info_from_id = face_manager.get_info
+get_all_info = face_manager.get_all_info
 deleteOne = face_manager.delete_one
 build_dataset = face_manager.build_dataset
 
