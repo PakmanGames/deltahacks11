@@ -12,8 +12,8 @@ def connect():
     print("Connected to server")
     sio.emit("register", {"type": "publisher"})
 
-@sio.event
-def registered_event():
+@sio.on("registered")
+def registered_event(data):
     global registered
     registered = True
     print("Registered as publisher")
@@ -40,13 +40,11 @@ while True:
     frame_bytes = base64.b64encode(buffer).decode('utf-8')
     
     # Emit frame
-    sio.emit('video_frame', {'frame': frame_bytes})
+    sio.emit('video_frame', frame_bytes)
     
     # Control frame rate
     # Our operations on the frame come here
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    # Display the resulting frame
-    sio.emit('message', gray.tolist())
     
     cv.imshow('frame', gray)
     if cv.waitKey(1) == ord('q'):
