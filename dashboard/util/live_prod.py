@@ -7,10 +7,12 @@ client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 token = client.tokens.create()
 
 def main():
-    rtc_config = RTCConfiguration({
-        "iceServers": token.ice_servers
-    })
-
+    # rtc_config = RTCConfiguration({
+    #     "iceServers": token.ice_servers
+    # })
+    rtc_config = RTCConfiguration(
+        {"iceServers": [{"urls": "stun:stun2.l.google.com:19302"}]}
+    )
 
     webrtc_streamer(key="example", rtc_configuration=rtc_config, media_stream_constraints={
         "video": True,
