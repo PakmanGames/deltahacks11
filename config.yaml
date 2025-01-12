@@ -1,0 +1,8 @@
+
+PATH:
+  DATASET_DIR: 'contacts/'
+  PKL_PATH: 'contacts/database.pkl'
+
+INFO:
+  PICTURE_PROMPT: 'MemoryLane helps you remember people by recognizing their faces. Our solution is an accessible tool for forgetful people as well as a preventative measure to alzheimers. To get started, upload a picture of a person you want to remember.'
+  WEBCAM_PROMPT: 'MemoryLane helps you remember people by recognizing their faces. Our solution is an accessible tool for forgetful people as well as a preventative measure to alzheimers. To get started, upload a picture of a person you want to remember.'
